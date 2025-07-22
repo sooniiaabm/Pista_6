@@ -1,0 +1,151 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Acceso Enigmático</title>
+  <style>
+    body {
+      margin: 0;
+      background: black;
+      color: #00ffcc;
+      font-family: 'Courier New', Courier, monospace;
+      overflow: hidden;
+    }
+
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: -1;
+    }
+
+    #pantalla-acceso, #pantalla-concedido {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      background: rgba(0, 0, 0, 0.8);
+      padding: 40px;
+      border: 2px dashed #00ffcc;
+      border-radius: 10px;
+      opacity: 1;
+      transition: opacity 1s ease;
+    }
+
+    input[type="text"] {
+      padding: 10px;
+      background-color: #000;
+      color: #00ffcc;
+      border: 1px solid #00ffcc;
+      font-size: 18px;
+      margin-top: 10px;
+      width: 80%;
+      text-align: center;
+    }
+
+    button {
+      margin-top: 15px;
+      padding: 10px 20px;
+      background-color: #00ffcc;
+      color: #000;
+      border: none;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    h1 {
+      font-size: 3em;
+      animation: glow 1.5s infinite;
+    }
+
+    @keyframes glow {
+      0% { text-shadow: 0 0 5px #00ffcc; }
+      50% { text-shadow: 0 0 20px #00ffaa; }
+      100% { text-shadow: 0 0 5px #00ffcc; }
+    }
+
+    .codigo {
+      font-size: 2em;
+      margin-top: 10px;
+      color: #00ffaa;
+    }
+
+    #pantalla-concedido {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="matrixCanvas"></canvas>
+
+<div id="pantalla-acceso">
+  <h2>🔐 ACCESO ENIGMÁTICO</h2>
+  <p><em>Adivinanza:</em><br>
+  "Me cuelgo en la cuerda, soy útil en la ascensión.<br>
+  Con forma de letra, aseguro tu sujeción.<br><br>
+  ¿Qué soy?"</p>
+  <input type="text" id="respuesta" placeholder="Escribe tu respuesta aquí">
+  <br>
+  <button onclick="verificarRespuesta()">Acceder</button>
+</div>
+
+<div id="pantalla-concedido">
+  <h1>✅ ACCESO CONCEDIDO</h1>
+  <p class="codigo">🔢 Código numérico: <strong>5902</strong></p>
+</div>
+
+<audio id="sonido-acceso" src="https://www.soundjay.com/button/beep-07.wav" preload="auto"></audio>
+
+<script>
+  function verificarRespuesta() {
+    const respuesta = document.getElementById("respuesta").value.trim().toLowerCase();
+    if (respuesta === "mosqueton") {
+      document.getElementById("pantalla-acceso").style.opacity = "0";
+      setTimeout(() => {
+        document.getElementById("pantalla-acceso").style.display = "none";
+        document.getElementById("pantalla-concedido").style.display = "block";
+        document.getElementById("sonido-acceso").play();
+      }, 1000);
+    } else {
+      alert("❌ Respuesta incorrecta. Intenta otra vez.");
+    }
+  }
+
+  const canvas = document.getElementById("matrixCanvas");
+  const ctx = canvas.getContext("2d");
+  canvas.height = window.innerHeight;
+  canvas.width = window.innerWidth;
+
+  let letters = "01ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  letters = letters.split("");
+
+  let fontSize = 14;
+  let columns = canvas.width / fontSize;
+  let drops = [];
+  for (let x = 0; x < columns; x++) {
+    drops[x] = 1;
+  }
+
+  function draw() {
+    ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "#00ffcc";
+    ctx.font = fontSize + "px Courier";
+    for (let i = 0; i < drops.length; i++) {
+      let text = letters[Math.floor(Math.random() * letters.length)];
+      ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+      if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+        drops[i] = 0;
+      }
+      drops[i]++;
+    }
+  }
+
+  setInterval(draw, 33);
+</script>
+
+</body>
+</html>
